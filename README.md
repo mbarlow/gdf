@@ -65,6 +65,13 @@ sha256sum -c checksums.txt --ignore-missing
 Windows ships a `.zip`; macOS uses the `darwin` archives. Each release carries
 `checksums.txt` (sha256) covering every asset.
 
+The macOS binaries are unsigned, so Gatekeeper quarantines them on first run.
+Clear it once:
+
+```bash
+xattr -d com.apple.quarantine gdf    # or: right-click -> Open
+```
+
 [rel]: https://github.com/mbarlow/gdf/releases/latest
 
 ### go install
