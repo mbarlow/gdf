@@ -1,10 +1,12 @@
 BINARY := gdf
 PREFIX ?= $(HOME)/.local
+VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+LDFLAGS := -s -w -X main.version=$(VERSION)
 
 .PHONY: build install uninstall test demo tidy clean git-config help
 
-build: ## Build the gdf binary
-	go build -o $(BINARY) .
+build: ## Build the gdf binary (stamps version from git describe)
+	go build -trimpath -ldflags "$(LDFLAGS)" -o $(BINARY) .
 
 test: ## Run unit tests with the race detector
 	go test -race -count=1 ./...
