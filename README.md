@@ -106,12 +106,15 @@ chromium, brave, edge).
 gdf merge <conflicted-file>     # resolve conflict markers, write back
 gdf diff  <fileA> <fileB>       # side-by-side diff
 gdf <fileA> <fileB>             # alias for diff
+gdf git   [<rev>]               # working tree vs HEAD (or <rev>), all files
+gdf git --staged [<rev>]        # index vs HEAD, all files
 
 # flags (anywhere on the line):
 #   --theme light|dark|auto    default auto
 #   --port  N                  fixed port (default random)
 #   --no-open                  print URL instead of launching Chrome
 #   --lang  <id>               force syntax language (paths without an extension)
+#   --staged                   git mode: diff the index instead of the working tree
 #   --version                  print version and exit
 ```
 
@@ -134,6 +137,42 @@ and close each window before the next opens.
 Exit codes: `0` = merged/applied (or diff closed), `1` = aborted (Abort button,
 window closed, or Esc). With `trustExitCode true`, git only marks a path
 resolved when gdf exits 0.
+
+### View working changes
+
+Two ways. Both come from `make git-config`.
+
+**`gdf git`** — one window, all changed files, a file-list sidebar. gdf reads
+git itself, so the panes are labeled by ref (`HEAD` vs `working tree`).
+
+![gdf git — dark theme](docs/git-dark.png)
+![gdf git — untracked file, light theme](docs/git-light.png)
+
+```bash
+gdf git               # working tree vs HEAD
+gdf git --staged      # index vs HEAD
+gdf git <rev>         # working tree vs a branch / commit / tag
+```
+
+Sidebar status badges: `M` modified, `A` staged-add, `D` deleted, `R` renamed,
+`U` untracked. Untracked files (not ignored) are included and rendered as
+all-new. `--staged` mode skips them — the index can't hold untracked.
+
+**`git difftool`** — gdf as git's difftool, one window per changed file
+(sequential, like mergetool):
+
+```bash
+git config --global difftool.gdf.cmd 'gdf diff "$LOCAL" "$REMOTE"'
+git config --global diff.tool gdf
+git config --global difftool.prompt false
+
+git difftool            # unstaged vs HEAD
+git difftool --cached   # staged vs HEAD
+git difftool <rev>      # working vs a ref
+```
+
+`gdf git` is usually what you want; `git difftool` plugs into existing muscle
+memory.
 
 ### Diffing across branches / refs
 

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -51,18 +53,33 @@ func splitLines(s string) []string {
 	return strings.Split(s, "\n")
 }
 
+// readSide reads one side of a diff. A missing path (deleted/added file, or a
+// difftool handing us a working path that no longer exists) reads as empty
+// rather than failing — so deletions render as all-removed, additions as
+// all-added. Real read errors (permissions, etc.) still surface.
+func readSide(path string) (string, error) {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			return "", nil
+		}
+		return "", err
+	}
+	return string(b), nil
+}
+
 // buildDiffSession produces a side-by-side diff of two files.
 func buildDiffSession(pathA, pathB string) (*Session, error) {
-	a, err := os.ReadFile(pathA)
+	a, err := readSide(pathA)
 	if err != nil {
 		return nil, err
 	}
-	b, err := os.ReadFile(pathB)
+	b, err := readSide(pathB)
 	if err != nil {
 		return nil, err
 	}
 
-	rows := buildDiffRows(string(a), string(b))
+	rows := buildDiffRows(a, b)
 
 	name := filepath.Base(pathA)
 	if filepath.Base(pathB) != name {

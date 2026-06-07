@@ -38,9 +38,19 @@ type Pane struct {
 	Sub   string `json:"sub"`
 }
 
+// FileDiff is one file's diff in multi-file (git) mode.
+type FileDiff struct {
+	Path     string `json:"path"`
+	Status   string `json:"status"` // M, A, D, R, C
+	Language string `json:"language"`
+	Added    int    `json:"added"`
+	Removed  int    `json:"removed"`
+	Rows     []Row  `json:"rows"`
+}
+
 // Session is the full payload handed to the web UI.
 type Session struct {
-	Mode      string     `json:"mode"` // "merge" | "diff"
+	Mode      string     `json:"mode"` // "merge" | "diff" | "git"
 	Filename  string     `json:"filename"`
 	Language  string     `json:"language"`
 	Theme     string     `json:"theme"`
@@ -48,6 +58,7 @@ type Session struct {
 	Right     Pane       `json:"right"`
 	Rows      []Row      `json:"rows"`
 	Conflicts []Conflict `json:"conflicts"`
+	Files     []FileDiff `json:"files,omitempty"` // git mode: one entry per changed file
 
 	// merge-mode reassembly state (not serialized)
 	mergePath string

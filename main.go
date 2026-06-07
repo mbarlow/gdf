@@ -21,12 +21,15 @@ usage:
   gdf merge <conflicted-file>     resolve git conflict markers, write result back
   gdf diff  <fileA> <fileB>       side-by-side diff of two files
   gdf <fileA> <fileB>             alias for diff
+  gdf git   [<rev>]               diff working tree vs HEAD (or <rev>), multi-file
+  gdf git --staged [<rev>]        diff the index instead of the working tree
 
 flags:
   --theme   light|dark|auto   (default auto)
   --port    fixed port        (default random)
   --no-open print URL instead of launching Chrome
   --lang    force syntax language (for paths without a usable extension)
+  --staged  git mode: diff the index instead of the working tree
   --version print version and exit
 
 git mergetool:
@@ -42,6 +45,7 @@ func main() {
 	port := fs.Int("port", 0, "fixed port (0 = random)")
 	noOpen := fs.Bool("no-open", false, "print URL instead of launching Chrome")
 	lang := fs.String("lang", "", "force syntax language (e.g. go, python) when the path has no usable extension")
+	staged := fs.Bool("staged", false, "git mode: diff the index instead of the working tree")
 	showVer := fs.Bool("version", false, "print version and exit")
 	fs.Usage = usage
 
@@ -85,6 +89,15 @@ func main() {
 			os.Exit(2)
 		}
 		sess, err = buildDiffSession(args[1], args[2])
+	case "git":
+		rev := ""
+		if len(args) == 2 {
+			rev = args[1]
+		} else if len(args) > 2 {
+			usage()
+			os.Exit(2)
+		}
+		sess, err = buildGitSession(rev, *staged)
 	default:
 		// bare two-file form: gdf a b
 		if len(args) != 2 {
@@ -102,10 +115,13 @@ func main() {
 	if *lang != "" {
 		sess.Language = *lang
 	}
-	if sess.Filename == "" {
-		sess.Filename = "(diff)"
-	} else {
-		sess.Filename = filepath.Clean(sess.Filename)
+	// git mode sets a summary filename and picks language per file; leave it.
+	if sess.Mode != "git" {
+		if sess.Filename == "" {
+			sess.Filename = "(diff)"
+		} else {
+			sess.Filename = filepath.Clean(sess.Filename)
+		}
 	}
 
 	code := serve(sess, *port, *noOpen)
