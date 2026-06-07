@@ -1,0 +1,21 @@
+gdf
+Copyright (c) 2026 Michael Barlow
+Licensed under the MIT License (see LICENSE).
+
+This product bundles the following third-party code in its compiled binaries.
+
+---
+
+github.com/sergi/go-diff
+  The Go port is licensed under the MIT License.
+  It is a port of Google's "diff-match-patch", which is licensed under the
+  Apache License 2.0. The go-diff distribution retains both license texts:
+    https://github.com/sergi/go-diff/blob/master/LICENSE              (MIT)
+    https://github.com/sergi/go-diff/blob/master/APACHE-LICENSE-2.0   (Apache-2.0)
+
+---
+
+Loaded at runtime from a CDN, not bundled in the binary (listed for completeness):
+
+  highlight.js          BSD 3-Clause
+  Inter / JetBrains Mono / SUSE Mono   SIL Open Font License 1.1

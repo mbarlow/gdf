@@ -3,6 +3,7 @@
 [![test](https://github.com/mbarlow/gdf/actions/workflows/test.yml/badge.svg)](https://github.com/mbarlow/gdf/actions/workflows/test.yml)
 [![release](https://img.shields.io/github/v/release/mbarlow/gdf?sort=semver&display_name=tag&label=release)](https://github.com/mbarlow/gdf/releases/latest)
 ![go](https://img.shields.io/badge/go-1.25-00ADD8?logo=go&logoColor=white)
+[![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 A meld-flavored side-by-side diff and merge tool that renders in a Chrome app
 window. Vanilla JS/CSS/SVG, no build step. The Go binary is the long-running
@@ -180,3 +181,12 @@ The conflicted file is the source of truth: gdf splits it into literal segments
 and conflict regions, renders the regions, and on resolve stitches the literal
 text back together with your chosen blocks. No reliance on separate
 LOCAL/BASE/REMOTE temp files — branch labels come from the markers themselves.
+
+## License
+
+gdf is [MIT](LICENSE).
+
+The one Go dependency, [sergi/go-diff](https://github.com/sergi/go-diff), is
+MIT. It's a port of Google's diff-match-patch, which is Apache-2.0, so go-diff
+carries both notices — retained in the distributed binaries (see [NOTICE](NOTICE)).
+Both are permissive; no copyleft reaches gdf.
