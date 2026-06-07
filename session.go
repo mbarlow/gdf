@@ -24,10 +24,10 @@ type Row struct {
 
 // Conflict describes one resolvable region (merge mode only).
 type Conflict struct {
-	ID          int      `json:"id"`
-	OursLabel   string   `json:"oursLabel"`
-	TheirsLabel string   `json:"theirsLabel"`
-	HasBase     bool     `json:"hasBase"`
+	ID          int    `json:"id"`
+	OursLabel   string `json:"oursLabel"`
+	TheirsLabel string `json:"theirsLabel"`
+	HasBase     bool   `json:"hasBase"`
 	// blocks kept server-side for reassembly
 	ours, theirs, base []string
 }

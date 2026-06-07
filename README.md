@@ -1,5 +1,9 @@
 # gdf
 
+[![test](https://github.com/mbarlow/gdf/actions/workflows/test.yml/badge.svg)](https://github.com/mbarlow/gdf/actions/workflows/test.yml)
+[![release](https://img.shields.io/github/v/release/mbarlow/gdf?sort=semver&display_name=tag&label=release)](https://github.com/mbarlow/gdf/releases/latest)
+![go](https://img.shields.io/badge/go-1.25-00ADD8?logo=go&logoColor=white)
+
 A meld-flavored side-by-side diff and merge tool that renders in a Chrome app
 window. Vanilla JS/CSS/SVG, no build step. The Go binary is the long-running
 process: it serves the UI, and when you resolve a merge it writes the result
