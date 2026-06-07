@@ -56,7 +56,7 @@ Grab the archive for your platform from the [latest release][rel], verify, run:
 
 ```bash
 # example: linux/amd64
-tar -xzf gdf_v1.0.0_linux_amd64.tar.gz
+tar -xzf gdf_v1.0.1_linux_amd64.tar.gz
 install -Dm755 gdf ~/.local/bin/gdf
 
 # verify against the published checksums
@@ -81,14 +81,7 @@ xattr -d com.apple.quarantine gdf    # or: right-click -> Open
 go install github.com/mbarlow/gdf@latest    # -> $(go env GOPATH)/bin/gdf
 ```
 
-`go install` replaced `go get` for installing binaries (Go 1.17+). While the
-repo is **private**, set `GOPRIVATE` and have git use SSH:
-
-```bash
-export GOPRIVATE=github.com/mbarlow/*
-git config --global url."git@github.com:".insteadOf "https://github.com/"
-```
-
+`go install` replaced `go get` for installing binaries (Go 1.17+).
 `@latest` resolves to the newest semver tag.
 
 ### Build from source
