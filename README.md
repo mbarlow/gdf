@@ -5,6 +5,11 @@ window. Vanilla JS/CSS/SVG, no build step. The Go binary is the long-running
 process: it serves the UI, and when you resolve a merge it writes the result
 back and exits — so it drops straight into `git mergetool`.
 
+Resolving a conflict (`theirs` chosen — the un-kept side dims, intra-line change highlighted):
+
+![gdf merge — dark theme](docs/merge-dark.png)
+![gdf merge — light theme](docs/merge-light.png)
+
 ## What it does
 
 - **Merge mode** — reads a git-conflicted file, parses `<<<<<<< ======= >>>>>>>`
