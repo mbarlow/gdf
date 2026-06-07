@@ -28,7 +28,8 @@ clean: ## Remove build artifacts
 git-config: ## Wire gdf up as a git mergetool
 	git config --global mergetool.gdf.cmd 'gdf merge "$$MERGED"'
 	git config --global mergetool.gdf.trustExitCode true
-	@echo "now run: git mergetool -t gdf"
+	git config --global merge.tool gdf
+	@echo "now run: git mergetool"
 
 help: ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'

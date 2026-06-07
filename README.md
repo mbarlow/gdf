@@ -47,13 +47,38 @@ make git-config
 # or manually:
 git config --global mergetool.gdf.cmd 'gdf merge "$MERGED"'
 git config --global mergetool.gdf.trustExitCode true
+git config --global merge.tool gdf      # <- without this, bare `git mergetool`
+                                        #    falls back to git's built-in list
 
-git mergetool -t gdf
+git mergetool            # uses gdf; or force per-run with: git mergetool -t gdf
 ```
+
+`git mergetool` launches gdf **once per conflicted file, sequentially** — resolve
+and close each window before the next opens.
 
 Exit codes: `0` = merged/applied (or diff closed), `1` = aborted (Abort button,
 window closed, or Esc). With `trustExitCode true`, git only marks a path
 resolved when gdf exits 0.
+
+### Diffing across branches / refs
+
+Diff mode takes any two files, so pair it with `git show` and process
+substitution to compare a path across branches, commits, or working tree:
+
+```bash
+# same file on two branches (--lang because /dev/fd/* has no extension)
+gdf diff --lang python <(git show main:app.py) <(git show feature/refresh:app.py)
+
+# working tree vs HEAD (right side is a real path, so it picks up .py itself)
+gdf diff <(git show HEAD:app.py) app.py --lang python
+
+# any two commits
+gdf diff --lang json <(git show abc123:config.json) <(git show def456:config.json)
+```
+
+Process substitution (`<(...)`) feeds gdf opaque `/dev/fd/*` paths, so the pane
+headers show those and syntax highlighting can't infer the language — pass
+`--lang` to force it.
 
 ### Keys
 

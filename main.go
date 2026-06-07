@@ -23,6 +23,7 @@ flags:
   --theme   light|dark|auto   (default auto)
   --port    fixed port        (default random)
   --no-open print URL instead of launching Chrome
+  --lang    force syntax language (for paths without a usable extension)
 
 git mergetool:
   git config --global mergetool.gdf.cmd 'gdf merge "$MERGED"'
@@ -36,6 +37,7 @@ func main() {
 	theme := fs.String("theme", "auto", "light|dark|auto")
 	port := fs.Int("port", 0, "fixed port (0 = random)")
 	noOpen := fs.Bool("no-open", false, "print URL instead of launching Chrome")
+	lang := fs.String("lang", "", "force syntax language (e.g. go, python) when the path has no usable extension")
 	fs.Usage = usage
 
 	// Parse flags from anywhere on the line (before, after, or between the
@@ -88,6 +90,9 @@ func main() {
 	}
 
 	sess.Theme = *theme
+	if *lang != "" {
+		sess.Language = *lang
+	}
 	if sess.Filename == "" {
 		sess.Filename = "(diff)"
 	} else {
