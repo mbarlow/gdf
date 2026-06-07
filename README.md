@@ -184,4 +184,9 @@ LOCAL/BASE/REMOTE temp files — branch labels come from the markers themselves.
 
 ## License
 
-[MIT](LICENSE). The one dependency, [sergi/go-diff](https://github.com/sergi/go-diff), is MIT too.
+gdf is [MIT](LICENSE).
+
+The one Go dependency, [sergi/go-diff](https://github.com/sergi/go-diff), is
+MIT. It's a port of Google's diff-match-patch, which is Apache-2.0, so go-diff
+carries both notices — retained in the distributed binaries (see [NOTICE](NOTICE)).
+Both are permissive; no copyleft reaches gdf.
