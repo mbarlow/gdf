@@ -118,6 +118,23 @@ gdf git --staged [<rev>]        # index vs HEAD, all files
 #   --version                  print version and exit
 ```
 
+### Git integration (TL;DR)
+
+```bash
+make git-config-simple
+```
+
+Wires gdf as mergetool + difftool and adds two aliases:
+
+```bash
+git gd [<rev>] [--staged]   # all working changes in one gdf window
+git gm <branch>             # merge; if it conflicts, gdf opens to resolve
+```
+
+You can't retrain bare `git merge` / `git diff` — those are builtins, and git
+ignores aliases that shadow them. `git gd` / `git gm` are one keystroke off and
+do the job. `git mergetool` and `git difftool` work too (set by the same target).
+
 ### As a git mergetool
 
 ```bash

@@ -3,7 +3,7 @@ PREFIX ?= $(HOME)/.local
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
-.PHONY: build install uninstall test demo tidy clean git-config help
+.PHONY: build install uninstall test demo tidy clean git-config git-config-simple help
 
 build: ## Build the gdf binary (stamps version from git describe)
 	go build -trimpath -ldflags "$(LDFLAGS)" -o $(BINARY) .
@@ -40,6 +40,14 @@ git-config: ## Wire gdf up as git mergetool + difftool
 	@echo "now run: git mergetool   (conflicts)"
 	@echo "         git difftool    (working changes, per file)"
 	@echo "or:      gdf git          (working changes, one window)"
+
+git-config-simple: git-config ## ...plus handy aliases: `git gd` (diff) and `git gm` (merge)
+	git config --global alias.gd '!gdf git'
+	git config --global alias.gm '!f(){ git merge "$$@" || git mergetool; }; f'
+	@echo
+	@echo "aliases ready:"
+	@echo "  git gd [<rev>] [--staged]   all working changes in one gdf window"
+	@echo "  git gm <branch>             merge; if it conflicts, gdf opens to resolve"
 
 help: ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
