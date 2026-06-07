@@ -56,7 +56,7 @@ Grab the archive for your platform from the [latest release][rel], verify, run:
 
 ```bash
 # example: linux/amd64
-tar -xzf gdf_v1.0.2_linux_amd64.tar.gz
+tar -xzf gdf_v1.0.3_linux_amd64.tar.gz
 install -Dm755 gdf ~/.local/bin/gdf
 
 # verify against the published checksums
