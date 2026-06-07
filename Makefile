@@ -30,11 +30,16 @@ clean: ## Remove build artifacts
 	rm -f $(BINARY)
 	rm -rf .demo
 
-git-config: ## Wire gdf up as a git mergetool
+git-config: ## Wire gdf up as git mergetool + difftool
 	git config --global mergetool.gdf.cmd 'gdf merge "$$MERGED"'
 	git config --global mergetool.gdf.trustExitCode true
 	git config --global merge.tool gdf
-	@echo "now run: git mergetool"
+	git config --global difftool.gdf.cmd 'gdf diff "$$LOCAL" "$$REMOTE"'
+	git config --global diff.tool gdf
+	git config --global difftool.prompt false
+	@echo "now run: git mergetool   (conflicts)"
+	@echo "         git difftool    (working changes, per file)"
+	@echo "or:      gdf git          (working changes, one window)"
 
 help: ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'

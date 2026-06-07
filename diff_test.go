@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -92,6 +94,37 @@ func TestBuildDiffRows(t *testing.T) {
 	ins := rows[4]
 	if ins.Left != nil || ins.Right == nil || ins.Right.N != 5 {
 		t.Errorf("insert row malformed: %+v", ins)
+	}
+}
+
+func TestReadSide(t *testing.T) {
+	// missing file reads as empty, no error
+	got, err := readSide(filepath.Join(t.TempDir(), "does-not-exist"))
+	if err != nil || got != "" {
+		t.Errorf("missing file: got %q err %v", got, err)
+	}
+	// existing file reads its content
+	p := filepath.Join(t.TempDir(), "f")
+	if err := os.WriteFile(p, []byte("hi\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if got, err := readSide(p); err != nil || got != "hi\n" {
+		t.Errorf("existing file: got %q err %v", got, err)
+	}
+}
+
+func TestBuildDiffRowsAddDelete(t *testing.T) {
+	// deletion: content vs empty -> all delete rows
+	for _, r := range buildDiffRows("x\ny\n", "") {
+		if r.Type != "delete" {
+			t.Errorf("deletion row type = %s", r.Type)
+		}
+	}
+	// addition: empty vs content -> all insert rows
+	for _, r := range buildDiffRows("", "x\ny\n") {
+		if r.Type != "insert" {
+			t.Errorf("addition row type = %s", r.Type)
+		}
 	}
 }
 

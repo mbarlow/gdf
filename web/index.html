@@ -36,18 +36,22 @@
     </div>
   </header>
 
-  <div id="panehead">
-    <div class="pane left">
-      <span class="branch" id="left-label"></span>
-      <span class="sub" id="left-sub"></span>
-    </div>
-    <div class="pane right">
-      <span class="branch" id="right-label"></span>
-      <span class="sub" id="right-sub"></span>
+  <div id="lower">
+    <nav id="filelist" aria-label="Changed files"></nav>
+    <div id="content">
+      <div id="panehead">
+        <div class="pane left">
+          <span class="branch" id="left-label"></span>
+          <span class="sub" id="left-sub"></span>
+        </div>
+        <div class="pane right">
+          <span class="branch" id="right-label"></span>
+          <span class="sub" id="right-sub"></span>
+        </div>
+      </div>
+      <main id="diff"></main>
     </div>
   </div>
-
-  <main id="diff"></main>
 
   <script src="/app.js"></script>
 </body>

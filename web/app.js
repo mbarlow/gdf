@@ -152,13 +152,14 @@ function updateStatus() {
   $("merge-btn").disabled = done < total;
 }
 
-function render() {
+function render(rows, lang) {
+  rows = rows || SESSION.rows;
+  lang = lang || SESSION.language;
   const diff = $("diff");
   diff.innerHTML = "";
-  const lang = SESSION.language;
   const seenConflict = new Set();
 
-  for (const row of SESSION.rows) {
+  for (const row of rows) {
     if (row.type === "conflict" && !seenConflict.has(row.conflictId)) {
       seenConflict.add(row.conflictId);
       const c = SESSION.conflicts.find((x) => x.id === row.conflictId);
@@ -175,6 +176,33 @@ function render() {
     r.appendChild(renderCell(row.right, lang, "right"));
     diff.appendChild(r);
   }
+}
+
+/* ---------- git multi-file mode ---------- */
+function selectFile(idx) {
+  const f = SESSION.files[idx];
+  $("filename").textContent = f.path;
+  $("lang").textContent = f.language;
+  document.querySelectorAll(".fl-item").forEach((el, i) =>
+    el.classList.toggle("sel", i === idx)
+  );
+  render(f.rows, f.language);
+  $("diff").scrollTop = 0;
+}
+
+function buildFileList() {
+  const nav = $("filelist");
+  nav.innerHTML = "";
+  SESSION.files.forEach((f, i) => {
+    const item = document.createElement("div");
+    item.className = "fl-item";
+    item.innerHTML =
+      `<span class="fl-status ${f.status}">${f.status}</span>` +
+      `<span class="fl-path" title="${f.path}">${f.path}</span>` +
+      `<span class="fl-counts"><span class="add">+${f.added}</span> <span class="del">-${f.removed}</span></span>`;
+    item.onclick = () => selectFile(i);
+    nav.appendChild(item);
+  });
 }
 
 /* ---------- theme ---------- */
@@ -237,6 +265,7 @@ async function init() {
   $("right-sub").textContent = SESSION.right.sub;
 
   bind();
+  document.documentElement.dataset.mode = SESSION.mode;
 
   if (SESSION.mode === "diff") {
     $("merge-btn").textContent = "Close";
@@ -249,9 +278,23 @@ async function init() {
     const del = SESSION.rows.filter((r) => r.type === "delete").length;
     const chg = SESSION.rows.filter((r) => r.type === "change").length;
     $("status").textContent = `+${ins}  -${del}  ~${chg}`;
+    render();
+  } else if (SESSION.mode === "git") {
+    $("merge-btn").textContent = "Close";
+    $("merge-btn").onclick = doClose;
+    $("merge-btn").disabled = false;
+    $("abort-btn").style.display = "none";
+    $("quick-ours").style.display = "none";
+    $("quick-theirs").style.display = "none";
+    const add = SESSION.files.reduce((s, f) => s + f.added, 0);
+    const del = SESSION.files.reduce((s, f) => s + f.removed, 0);
+    $("status").textContent = `${SESSION.files.length} files  +${add}  -${del}`;
+    buildFileList();
+    selectFile(0);
+  } else {
+    render();
   }
 
-  render();
   updateStatus();
 }
 

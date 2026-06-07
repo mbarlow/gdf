@@ -242,3 +242,43 @@ body { display: flex; flex-direction: column; height: 100vh; }
 .hljs-section { color: var(--t-func); }
 .hljs-emphasis { font-style: italic; }
 .hljs-strong { font-weight: 700; }
+
+/* ---------- multi-file (git) layout ---------- */
+#lower { flex: 1 1 auto; display: flex; min-height: 0; }
+#content { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+
+#filelist { display: none; }
+[data-mode="git"] #filelist {
+  display: block;
+  flex: 0 0 260px;
+  overflow-y: auto;
+  background: var(--bg-2);
+  border-right: 1px solid var(--border);
+}
+
+.fl-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  font-size: 12px;
+}
+.fl-item:hover { background: var(--bg-3); }
+.fl-item.sel { background: var(--bg-3); border-left-color: var(--accent); }
+.fl-status {
+  flex: 0 0 16px; text-align: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 11px;
+}
+.fl-status.M { color: var(--t-type); }
+.fl-status.A { color: var(--t-string); }
+.fl-status.D { color: #f38ba8; }
+.fl-status.R, .fl-status.C { color: var(--accent); }
+.fl-path {
+  flex: 1 1 auto; min-width: 0;
+  font-family: var(--font-mono);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  direction: rtl; text-align: left;          /* keep the filename visible when truncating */
+}
+.fl-counts { flex: 0 0 auto; font-family: var(--font-mono); font-size: 10.5px; }
+.fl-counts .add { color: var(--t-string); }
+.fl-counts .del { color: #f38ba8; }
