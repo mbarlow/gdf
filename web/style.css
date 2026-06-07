@@ -273,6 +273,7 @@ body { display: flex; flex-direction: column; height: 100vh; }
 .fl-status.A { color: var(--t-string); }
 .fl-status.D { color: #f38ba8; }
 .fl-status.R, .fl-status.C { color: var(--accent); }
+.fl-status.U { color: var(--t-attr); }
 .fl-path {
   flex: 1 1 auto; min-width: 0;
   font-family: var(--font-mono);

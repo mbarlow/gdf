@@ -145,14 +145,18 @@ Two ways. Both come from `make git-config`.
 **`gdf git`** — one window, all changed files, a file-list sidebar. gdf reads
 git itself, so the panes are labeled by ref (`HEAD` vs `working tree`).
 
+![gdf git — dark theme](docs/git-dark.png)
+![gdf git — untracked file, light theme](docs/git-light.png)
+
 ```bash
 gdf git               # working tree vs HEAD
 gdf git --staged      # index vs HEAD
 gdf git <rev>         # working tree vs a branch / commit / tag
 ```
 
-Shows tracked changes (modified, added, deleted, renamed). Untracked files
-don't appear — that's `git diff HEAD` behavior; `git add` them first.
+Sidebar status badges: `M` modified, `A` staged-add, `D` deleted, `R` renamed,
+`U` untracked. Untracked files (not ignored) are included and rendered as
+all-new. `--staged` mode skips them — the index can't hold untracked.
 
 **`git difftool`** — gdf as git's difftool, one window per changed file
 (sequential, like mergetool):

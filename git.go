@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"sort"
 	"strings"
 )
 
@@ -119,6 +120,28 @@ func buildGitSession(rev string, staged bool) (*Session, error) {
 		})
 	}
 
+	// Untracked files: not in HEAD or the index, but present and not ignored.
+	// Only relevant to the working tree (the index can't contain untracked).
+	if !staged {
+		untracked, _ := git("ls-files", "--others", "--exclude-standard")
+		for _, path := range strings.Split(strings.TrimRight(untracked, "\n"), "\n") {
+			if path == "" {
+				continue
+			}
+			content, _ := readSide(path)
+			rows := buildDiffRows("", content)
+			add, rem := countChanges(rows)
+			files = append(files, FileDiff{
+				Path:     path,
+				Status:   "U", // untracked
+				Language: langFor(path),
+				Added:    add,
+				Removed:  rem,
+				Rows:     rows,
+			})
+		}
+	}
+
 	if len(files) == 0 {
 		where := "working tree"
 		if staged {
@@ -126,6 +149,8 @@ func buildGitSession(rev string, staged bool) (*Session, error) {
 		}
 		return nil, fmt.Errorf("no changes in %s vs %s", where, base)
 	}
+
+	sort.Slice(files, func(i, j int) bool { return files[i].Path < files[j].Path })
 
 	return &Session{
 		Mode:     "git",

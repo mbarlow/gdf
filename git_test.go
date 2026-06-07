@@ -65,8 +65,17 @@ func TestBuildGitSession(t *testing.T) {
 	if f, ok := byPath["del.txt"]; !ok || f.Status != "D" {
 		t.Errorf("del.txt: status=%q ok=%v", f.Status, ok)
 	}
-	if _, ok := byPath["new.txt"]; ok {
-		t.Error("untracked new.txt should not appear in `git diff HEAD`")
+	// untracked file shows with status U, rendered as all-insert
+	if f, ok := byPath["new.txt"]; !ok || f.Status != "U" {
+		t.Errorf("new.txt: status=%q ok=%v (want U)", f.Status, ok)
+	} else if f.Added != 1 || f.Removed != 0 {
+		t.Errorf("new.txt counts: +%d -%d (want +1 -0)", f.Added, f.Removed)
+	}
+	// files are sorted by path
+	for i := 1; i < len(sess.Files); i++ {
+		if sess.Files[i-1].Path > sess.Files[i].Path {
+			t.Errorf("files not sorted: %q before %q", sess.Files[i-1].Path, sess.Files[i].Path)
+		}
 	}
 }
 
