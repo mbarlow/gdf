@@ -27,7 +27,70 @@ Resolving a conflict (`theirs` chosen — the un-kept side dims, intra-line chan
 - Syntax highlighting (highlight.js), light / dark theme (auto-detects, toggle).
 - Fonts: Inter (UI), JetBrains Mono / SUSE Mono (code).
 
+## Why
+
+A diff tool shouldn't drag in a supply chain.
+
+- **No npm, no Python, no `node_modules`.** Vanilla JS in the browser, a Go
+  binary on the host. Nothing installs at runtime.
+- **One dependency.** `sergi/go-diff`, pinned by hash in `go.sum`. That's the
+  whole tree.
+- **Supply-chain surface ≈ zero.** The recent npm attacks ride deep dependency
+  trees and malicious postinstall scripts. gdf has neither. Nothing to poison.
+- **Single static binary.** No runtime, no interpreter. Build once, run
+  anywhere — linux / mac / windows, amd64 / arm64.
+- **Reproducible.** Same source, same `go.sum`, same bytes.
+- **A webview buys a rich UI for free.** Real layout, web fonts, color, SVG,
+  motion — all in vanilla HTML/CSS/JS. No native-widget ceiling. The look is
+  fully yours to shape; customization is endless.
+- **And I love Go.**
+
 ## Install
+
+Three ways. Pick one.
+
+### Download a binary
+
+Grab the archive for your platform from the [latest release][rel], verify, run:
+
+```bash
+# example: linux/amd64
+tar -xzf gdf_v1.0.0_linux_amd64.tar.gz
+install -Dm755 gdf ~/.local/bin/gdf
+
+# verify against the published checksums
+sha256sum -c checksums.txt --ignore-missing
+```
+
+Windows ships a `.zip`; macOS uses the `darwin` archives. Each release carries
+`checksums.txt` (sha256) covering every asset.
+
+[rel]: https://github.com/mbarlow/gdf/releases/latest
+
+### go install
+
+```bash
+go install github.com/mbarlow/gdf@latest    # -> $(go env GOPATH)/bin/gdf
+```
+
+`go install` replaced `go get` for installing binaries (Go 1.17+). While the
+repo is **private**, set `GOPRIVATE` and have git use SSH:
+
+```bash
+export GOPRIVATE=github.com/mbarlow/*
+git config --global url."git@github.com:".insteadOf "https://github.com/"
+```
+
+`@latest` resolves to the newest semver tag.
+
+### Build from source
+
+```bash
+make install          # -> ~/.local/bin/gdf  (stamps version from git describe)
+```
+
+Requires Go 1.25+. At runtime gdf needs a Chromium-family browser on PATH
+(google-chrome, chromium, brave, edge). `gdf --version` prints the build.
 
 ```bash
 make install          # -> ~/.local/bin/gdf
@@ -47,6 +110,8 @@ gdf <fileA> <fileB>             # alias for diff
 #   --theme light|dark|auto    default auto
 #   --port  N                  fixed port (default random)
 #   --no-open                  print URL instead of launching Chrome
+#   --lang  <id>               force syntax language (paths without an extension)
+#   --version                  print version and exit
 ```
 
 ### As a git mergetool

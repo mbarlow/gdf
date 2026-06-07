@@ -11,6 +11,9 @@ import (
 	"path/filepath"
 )
 
+// version is overwritten at build time via -ldflags "-X main.version=...".
+var version = "dev"
+
 func usage() {
 	fmt.Fprint(os.Stderr, `gdf — side-by-side diff / merge in a Chrome app window
 
@@ -24,6 +27,7 @@ flags:
   --port    fixed port        (default random)
   --no-open print URL instead of launching Chrome
   --lang    force syntax language (for paths without a usable extension)
+  --version print version and exit
 
 git mergetool:
   git config --global mergetool.gdf.cmd 'gdf merge "$MERGED"'
@@ -38,6 +42,7 @@ func main() {
 	port := fs.Int("port", 0, "fixed port (0 = random)")
 	noOpen := fs.Bool("no-open", false, "print URL instead of launching Chrome")
 	lang := fs.String("lang", "", "force syntax language (e.g. go, python) when the path has no usable extension")
+	showVer := fs.Bool("version", false, "print version and exit")
 	fs.Usage = usage
 
 	// Parse flags from anywhere on the line (before, after, or between the
@@ -54,6 +59,10 @@ func main() {
 		}
 		args = append(args, more[0])
 		rest = more[1:]
+	}
+	if *showVer {
+		fmt.Printf("gdf %s\n", version)
+		return
 	}
 	if len(args) == 0 {
 		usage()
