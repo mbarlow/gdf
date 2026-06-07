@@ -8,14 +8,14 @@ import (
 
 // segment is a piece of the conflicted file: either plain text or a conflict.
 type segment struct {
-	isConflict bool
-	text       []string // for plain text segments
-	ours       []string
-	base       []string
-	theirs     []string
-	oursLabel  string
+	isConflict  bool
+	text        []string // for plain text segments
+	ours        []string
+	base        []string
+	theirs      []string
+	oursLabel   string
 	theirsLabel string
-	hasBase    bool
+	hasBase     bool
 }
 
 // parseConflicts splits a conflict-marked file into ordered segments.
