@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"runtime"
 	"time"
 )
 
@@ -144,6 +145,16 @@ func launchChrome(url string) *exec.Cmd {
 		}
 	}
 	if bin == "" {
+		// PATH lookup misses on macOS (Chrome lives in an .app bundle) and
+		// on some Linux installs. Fall back to known absolute locations.
+		for _, p := range chromeFallbackPaths() {
+			if fi, err := os.Stat(p); err == nil && !fi.IsDir() {
+				bin = p
+				break
+			}
+		}
+	}
+	if bin == "" {
 		return nil
 	}
 	dir, err := os.MkdirTemp("", "gdf-profile-")
@@ -165,4 +176,26 @@ func launchChrome(url string) *exec.Cmd {
 		return nil
 	}
 	return cmd
+}
+
+// chromeFallbackPaths returns absolute Chrome/Chromium locations that aren't
+// usually on PATH, keyed by OS.
+func chromeFallbackPaths() []string {
+	switch runtime.GOOS {
+	case "darwin":
+		return []string{
+			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+			"/Applications/Chromium.app/Contents/MacOS/Chromium",
+			"/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+			"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+		}
+	default:
+		return []string{
+			"/usr/bin/google-chrome-stable",
+			"/usr/bin/google-chrome",
+			"/usr/bin/chromium",
+			"/usr/bin/chromium-browser",
+			"/snap/bin/chromium",
+		}
+	}
 }
